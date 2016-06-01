@@ -1,8 +1,12 @@
 var fs = require('fs');
+var path = require('path');
 
 var file = process.argv[2];
+var output = path.parse(file).name;
 
-fs.readFile(file, 'utf8', (err, data) => {
+fs.readFile(file, 'utf8', readFileCallback);
+
+function readFileCallback (err, data) {
   if (err) throw err;
   var fullText = data; // raw data string
   var removedPunctuation = fullText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()\[\]?]/g,' '); // remove all punctuation except for apostrophes
@@ -10,35 +14,26 @@ fs.readFile(file, 'utf8', (err, data) => {
   // var lowerCase = removedNewlines.toLowerCase(); // normalize everything tp lowercase
   var words = removedNewlines.split(' '); // split the string into an array of words
 
-// remove any artifacts of splitting the string into an array
-for (var i = words.length-1; i--;){
-  if (words[i] === '' ) words.splice(i, 1);
+  // remove any artifacts of splitting the string into an array
+  for (var i = words.length-1; i--;){
+    if (words[i] === '' ) words.splice(i, 1);
+  }
+
+  var wordCounts = {}; // create empty object for adding wordcounts to
+  for (var i = 0; i < words.length; i++) {
+    let normalizedWord = words[i].toLowerCase().trim();
+    if (wordCounts.hasOwnProperty(normalizedWord)) {  // if the word already exists in the wordCounts object
+      wordCounts[normalizedWord] += 1; // increment the count by one
+    }
+    else {
+      wordCounts[normalizedWord] = 1; // if it doens't exist, add it to the object
+    }
+  }
+  // writes resulting object to a text file
+  fs.writeFile(`${output}-wordcount.txt`, JSON.stringify(wordCounts), 'utf8', (err) => {
+    if (err) throw err;
+    console.log('Finished creating word count.');
+  });
 }
 
-// words.forEach((word) => {
-//   word.trim(); // trim any whitespace, just in case
-// });
-
-// console.log(words.slice(250, 280)); // check our work
-
-var wordCounts = {}; // create empty object for adding wordcounts to
-
-for (var i = 0; i < words.length; i++) {
-  let normalizedWord = words[i].toLowerCase().trim();
-  if (wordCounts.hasOwnProperty(normalizedWord)) {  // if the word already exists in the wordCounts object
-    wordCounts[normalizedWord] += 1; // increment the count by one
-  }
-  else {
-    wordCounts[normalizedWord] = 1; // if it doens't exist, add it to the object
-  }
-}
-
-// writes resulting object to a text file
-fs.writeFile('wordcount.txt', JSON.stringify(wordCounts), 'utf8', (err) => {
-  if (err) throw err;
-  console.log('Finished creating word count.');
-});
-
-// console.log(wordCounts.hamlet);
-
-});
+console.log(file);
