@@ -9,10 +9,13 @@ fs.readFile(file, 'utf8', readFileCallback);
 function readFileCallback (err, data) {
   if (err) throw err;
   var fullText = data; // raw data string
-  var removedPunctuation = fullText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()\[\]?]/g,' '); // remove all punctuation except for apostrophes
+  console.log('Read data.');
+  var removedPunctuation = fullText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()\[\]?]/g,' ');
+  console.log('Removed punctuation.'); // remove all punctuation except for apostrophes
   var removedNewlines = removedPunctuation.replace(/\r?\n|\r/g,' '); // remove newlines and replace them with ' '
-  // var lowerCase = removedNewlines.toLowerCase(); // normalize everything tp lowercase
+  console.log('Removed newlines.>;');
   var words = removedNewlines.split(' '); // split the string into an array of words
+  console.log('Split words into array.');
 
   // remove any artifacts of splitting the string into an array
   for (var i = words.length-1; i--;){
@@ -32,8 +35,6 @@ function readFileCallback (err, data) {
   // writes resulting object to a text file
   fs.writeFile(`${output}-wordcount.txt`, JSON.stringify(wordCounts), 'utf8', (err) => {
     if (err) throw err;
-    console.log('Finished creating word count.');
+    console.log(`Word count available as ${output}-wordcount.txt`);
   });
 }
-
-console.log(file);
