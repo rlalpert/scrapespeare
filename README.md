@@ -16,7 +16,7 @@ Takes a file as an input. Currently outputs as `filename-wordcount.txt` in the f
 { "Node": 1, "Rocks": 1 }
 ```
 
-In its current form, it will **overwrite** existing files if they have the nme of the output file. 
+In its current form, it will **overwrite** existing files if they have the name of the output file. 
 
 It also currently counts number frequency with word frequency.
 
